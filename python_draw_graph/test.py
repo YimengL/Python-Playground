@@ -4,47 +4,39 @@ import csv
 
 # Start - Configuration
 
-file_name = 'data.csv'   # 文件位置
-
-# End Configuration
+file_name = 'data.csv'  # 文件位置
 
 kf_apikal = {'label': 'KF-Apikal', 'data': []}
 kf_mittel = {'label': 'KF-Mittel', 'data': []}
 kf_zervikal = {'label': 'KF-Zertikal', 'data': []}
-fm_apikal = []
-fm_mittel = []
-fm_zervikal = []
-hyf_apikal = []
-hyf_mittel = []
-hyf_zervikal = []
+fm_apikal = {'label': 'FM-Apikal', 'data': []}
+fm_mittel = {'label': 'FM-Mittel', 'data': []}
+fm_zervikal = {'label': 'FM-Zertikal', 'data': []}
+hyf_apikal = {'label': 'HyF-Apikal', 'data': []}
+hyf_mittel = {'label': 'HyF-Mittel', 'data': []}
+hyf_zervikal = {'label': 'HyF-Zertikal', 'data': []}
 
-full_data = [kf_apikal, kf_mittel, kf_zervikal]
+# End Configuration
+
+full_data = [kf_apikal, kf_mittel, kf_zervikal,
+             fm_apikal, fm_mittel, fm_zervikal,
+             hyf_apikal, hyf_mittel, hyf_zervikal]
 
 color1 = "#EFE4E8"
 
 with open(file_name) as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',')
-    for row in spamreader:
-        kf_apikal['data'].append(int(row[0]))
-        kf_mittel['data'].append(int(row[1]))
-        kf_zervikal['data'].append(int(row[2]))
-        fm_apikal.append(int(row[3]))
-        fm_mittel.append(int(row[4]))
-        fm_zervikal.append(int(row[5]))
-        hyf_apikal.append(int(row[6]))
-        hyf_mittel.append(int(row[7]))
-        hyf_zervikal.append(int(row[8]))
+    csv_reader = csv.reader(csvfile, delimiter=',')
+    for row in csv_reader:
+        for index, data in enumerate(full_data):
+            full_data[index]['data'].append(float(row[index]))
 
-print("Print Out All data: ")
+print("Please verify below data: ")
 for r in full_data:
     print("{}: {}".format(r['label'], r['data']))
 
-data_to_plot = [kf_apikal['data'], kf_mittel['data'], kf_zervikal['data'], fm_apikal, fm_mittel,
-                fm_zervikal, hyf_apikal, hyf_mittel, hyf_zervikal]
+assert (len(full_data) == 9), "full data"
 
-data_to_plot = list(map(lambda d : d['data'], full_data))
-
-print("Data to Plot: {}".format(data_to_plot))
+data_to_plot = list(map(lambda d: d['data'], full_data))
 
 fs = 10
 pos = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -59,15 +51,11 @@ pos = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
 plt.figure(dpi=120)
-labels = ['KF-Apikal', 'KF-Mittel', 'KF-Zertikal',
-          'FM-Apikal', 'FM-Mittel', 'FM-Zertikal',
-          'HyF-Apikal', 'HyF-Mittel', 'HyF-Zertikal']
 plt.xlabel("Feilen-System", {"size": 10})
 plt.ylabel("Kanalstranport", {"size": 10})
-plt.yticks(fontsize = 12)
+plt.yticks(fontsize=12)
 
-g = sns.violinplot(data_to_plot, palette=[color1, 'r', 'r', 'g', 'g', 'g', 'b', 'b', 'b'])
-g.set_xticklabels(labels=labels, rotation=45)
-
+g = sns.violinplot(data_to_plot, palette=["#EFE4E8", 'r', 'r', 'g', 'g', 'g', 'b', 'b', 'b'])
+g.set_xticklabels(labels=list(map(lambda d: d['label'], full_data)), rotation=45)
 
 plt.show()
